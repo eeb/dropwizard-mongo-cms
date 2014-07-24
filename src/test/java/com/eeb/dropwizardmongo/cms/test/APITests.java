@@ -47,29 +47,10 @@ public class APITests {
     @Test
     public void metaDataTest() throws JsonProcessingException {
 
-        Author a = new Author();
-        a.setId("1");
-        a.setName("Tom");
-
-        BasicDetail bd = new BasicDetail();
-        bd.setText("asdf");
-
-        Metadata md = new Metadata();
-        md.setType("basic-page");
-        md.setSection("my-photos");
-        md.setSlug("about");
-        md.setTitle("About Us");
-        md.setAuthor(a);
-        md.setTags(Arrays.asList(new String[]{"a","b"}));
-        md.setDetail(bd);
-
-        BasicPage bp = new BasicPage();
+        BasicPage bp = new Mocks.MockBasicPage();
+        bp.getMetadata().getAuthor().setId("1");
         bp.setId("1");
         bp.setNonce("2");
-        bp.setMetadata(md);
-
-
-        //m.enable(SerializationFeature.CLOSE_CLOSEABLE.INDENT_OUTPUT);
 
 
         assert m.writeValueAsString(bp).equals("{\"_id\":\"1\",\"nonce\":\"2\",\"metadata\":{\"type\":\"basic-page\",\"section\":\"my-photos\",\"slug\":\"about\",\"title\":\"About Us\",\"created\":null,\"author\":{\"_id\":\"1\",\"name\":\"Tom\"},\"tags\":[\"a\",\"b\"],\"detail\":{\"text\":\"asdf\"}}}")
