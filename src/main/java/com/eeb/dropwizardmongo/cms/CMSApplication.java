@@ -22,8 +22,8 @@ public class CMSApplication extends Application<CMSConfiguration> {
 
     @Override
     public void run(CMSConfiguration cmsConfiguration, Environment environment) throws Exception {
-        MongoClient mongoClient = cmsConfiguration.getMongoClientFactory().build(environment);
-        DB db = cmsConfiguration.getMongoDBFactory().build(mongoClient);
+        MongoClient mongoClient = cmsConfiguration.getMongoFactory().buildClient(environment);
+        DB db = cmsConfiguration.getMongoFactory().buildDB(environment);
 
         //Register Health Checks
         environment.healthChecks().register("MongoDB",new MongoHealthCheck(mongoClient));

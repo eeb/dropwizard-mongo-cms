@@ -3,6 +3,7 @@ package com.eeb.dropwizardmongo.cms.test;
 import com.eeb.dropwizardmongo.cms.CMSApplication;
 import com.eeb.dropwizardmongo.cms.CMSConfiguration;
 import com.eeb.dropwizardmongo.cms.api.BasicPage;
+import com.eeb.dropwizardmongo.exceptions.NullDBNameException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
@@ -43,10 +44,8 @@ public class ResourcesIntegrationTests {
 
 
     @BeforeClass
-    public static void setup() throws UnknownHostException {
-        mongoDB = rule.getConfiguration().getMongoDBFactory().build(
-                rule.getConfiguration().getMongoClientFactory().build(rule.getEnvironment())
-        );
+    public static void setup() throws UnknownHostException, NullDBNameException {
+        mongoDB = rule.getConfiguration().getMongoFactory().buildDB(rule.getEnvironment());
     }
 
     /**
