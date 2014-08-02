@@ -37,11 +37,18 @@ public class BasicPageResource {
 
     @PUT
     public MongoDocument put(@Valid BasicPage newPage) {
-        final JacksonDBCollection<BasicPage,String> col = JacksonDBCollection.wrap(mongoDb.getCollection("assets"),
-                BasicPage.class, String.class);
-        WriteResult<BasicPage, String> res = null;
+
         try {
+
+            final JacksonDBCollection<BasicPage,String> col = JacksonDBCollection.wrap(mongoDb.getCollection("assets"),
+                    BasicPage.class, String.class);
+            WriteResult<BasicPage, String> res = null;
             res = col.insert(newPage);
+            MongoDocument d = new MongoDocument();
+            d.setId(((ObjectId)res.getDbObject().get("_id")).toString());
+
+            return d;
+
         } catch(Exception e) {
             Response.ResponseBuilder response = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
             response.entity("{\"message\":\""+e.getMessage()+"\"}");
@@ -49,10 +56,6 @@ public class BasicPageResource {
             throw new WebApplicationException(response.build());
         }
 
-        MongoDocument d = new MongoDocument();
-        d.setId(((ObjectId)res.getDbObject().get("_id")).toString());
-
-        return d;
     }
 
     @POST
