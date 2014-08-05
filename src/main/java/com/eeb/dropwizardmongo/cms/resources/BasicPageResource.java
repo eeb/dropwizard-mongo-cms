@@ -3,6 +3,7 @@ package com.eeb.dropwizardmongo.cms.resources;
 import com.eeb.dropwizardmongo.cms.api.BasicPage;
 import com.eeb.dropwizardmongo.cms.api.Metadata;
 import com.eeb.dropwizardmongo.cms.api.MongoDocument;
+import com.eeb.dropwizardmongo.cms.views.BasicPageView;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -10,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.mongojack.DBCursor;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.WriteResult;
+import org.mongojack.internal.stream.JacksonDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +26,7 @@ import java.util.concurrent.Callable;
  */
 
 @Path("/cms/{slug}")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+
 public class BasicPageResource {
 
 
@@ -36,6 +37,8 @@ public class BasicPageResource {
     }
 
     @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public MongoDocument put(@Valid BasicPage newPage) {
 
         try {
@@ -70,13 +73,15 @@ public class BasicPageResource {
      * @return {@code BasicPage} object or a 403 if the object can not be found.
      */
     @GET
-    public BasicPage get(@PathParam("slug") String slug) {
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public BasicPageView get(@PathParam("slug") String slug) {
 
         JacksonDBCollection<BasicPage,String> col = JacksonDBCollection.wrap(mongoDb.getCollection("assets"),
                 BasicPage.class, String.class);
 
         //Note: MongoJack does not support the AutoClose interface
-        DBCursor<BasicPage> cursor = col.find(new BasicDBObject("slug",slug));
+        DBCursor<BasicPage> cursor = col.find(new BasicDBObject("metadata.slug",slug));
         try  {
 
             if(!cursor.hasNext()) {
@@ -84,7 +89,7 @@ public class BasicPageResource {
                 response.entity("{\"message\":\"Object not found\"}");
                 throw new WebApplicationException(response.build());
             } else {
-                return cursor.next();
+                return new BasicPageView(cursor.next());
             }
 
         } finally {

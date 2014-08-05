@@ -8,7 +8,6 @@ mongoDB:
 #         port: 27017
 
 
-
 # Logging Settings
 logging:
     level: INFO

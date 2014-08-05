@@ -98,6 +98,21 @@ public class ResourcesIntegrationTests {
     }
 
     @Test
+    public void getTest() throws Exception {
+        putTest();
+        final Client client = new Client();
+        final WebResource resource = client.resource("http://localhost:4444/cms/about");
+        String response = resource.type(MediaType.APPLICATION_JSON).get(String.class);
+        System.out.println(response);
+        assert response.contains("<!DOCTYPE html>") : "HTML was not produced in the response.";
+
+
+
+
+    }
+
+
+    @Test
     public void putErrorTest() throws Exception {
         final BasicPage bp = new Mocks.MockBasicPage();
         bp.setId("1");
